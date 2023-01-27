@@ -20,10 +20,20 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
+    # - task: Docker@2
+    #   displayName: Build an image
+    #   inputs:
+    #     command: build
+    #     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+    #     tags: |
+    #       $(tag)
+    
     - task: Docker@2
-      displayName: Build an image
+      displayName: Build and push to dockerhub
       inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: |
-          $(tag)
+        containerRegistry: 'dockerhub'
+        repository: 'my_first_bot'
+        command: 'buildAndPush'
+        Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        tags: pipelinetest
+    
