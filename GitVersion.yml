@@ -1,0 +1,6 @@
+mode: Mainline
+merge-message-formats: {}
+branches:
+  main:
+    increment: Patch
+    is-mainline: true
