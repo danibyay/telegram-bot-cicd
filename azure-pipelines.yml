@@ -32,8 +32,10 @@ stages:
       displayName: Build and push to dockerhub
       inputs:
         containerRegistry: 'dockerhub'
-        repository: 'my_first_bot'
+        repository: 'danibish/my_first_bot'
         command: 'buildAndPush'
         Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: pipelinetest
+        tags: |
+          pipelinetest
+          tag
     
