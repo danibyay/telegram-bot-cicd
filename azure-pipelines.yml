@@ -45,3 +45,28 @@ stages:
     #       pipelinetest
     #       $(tag)
     
+    - task: TerraformTaskV3@3
+      displayName: Terraform init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        backendServiceArm: 'Azure subscription 1(fd4eca56-866a-4d42-8ec3-cc4426d20760)'
+        backendAzureRmResourceGroupName: 'tfstate'
+        backendAzureRmStorageAccountName: 'tfstate23904'
+        backendAzureRmContainerName: 'tfstatebot'
+        backendAzureRmKey: 'my_first_bot.tfstate'
+    
+    - task: TerraformTaskV3@3
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+    
+    - task: TerraformTaskV3@3
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        environmentServiceNameAzureRM: 'azure-telegram'
+        commandOptions: '-var token=$(danibishbot_token)'
