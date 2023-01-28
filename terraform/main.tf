@@ -15,18 +15,20 @@ resource "azurerm_container_group" "aci" {
     image  = "danibish/my_first_bot:1.0.0"
     cpu    = "0.5"
     memory = "1.0"
-    secure_environment_variables = var.token
 
-    ports = [
-      {
+    secure_environment_variables {
+        TOKEN = var.token
+    } 
+
+    ports {
         port     = 80
         protocol = "TCP"
-      },
-      {
+    }
+    ports {
         port     = 443
         protocol = "TCP"
-      }
-    ]
+    }
+    
   }
 
 }
