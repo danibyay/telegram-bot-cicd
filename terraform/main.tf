@@ -12,7 +12,7 @@ resource "azurerm_container_group" "aci" {
 
   container {
     name   = "telegram-bot"
-    image  = "danibish/my_first_bot:${var.tag}!"
+    image  = "danibish/my_first_bot:${var.tag}"
     cpu    = "0.5"
     memory = "1.0"
 

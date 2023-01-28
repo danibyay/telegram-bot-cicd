@@ -11,10 +11,6 @@ resources:
 variables:
 - group: TELEGRAM
 - group: TF_STORAGE_ACCOUNT
-- name: buildTag
-  value: '$(Build.BuildId)'
-- name: image_name
-  value: "danibish/my_first_bot"
 
 
 stages:
@@ -43,28 +39,18 @@ stages:
         echo MajorMinorPatch: $(GitVersion.MajorMinorPatch)
       displayName: echo next tag
 
-    # Build on any branch
-    # - task: Docker@2
-    #   displayName: Build an image
-    #   inputs:
-    #     command: build
-    #     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-    #     tags: |
-    #       $(buildTag)
-
     
-    # push only on master
-    # - task: Docker@2
-    #   displayName: Build and push to dockerhub
-    #   inputs:
-    #     containerRegistry: 'dockerhub'
-    #     repository: $(image_name)
-    #     command: 'buildAndPush'
-    #     Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-    #     tags: |
-    #       pipelinetest
-    #       $(tag)
-    #eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    # push on PRs to main
+    - task: Docker@2
+      displayName: Build and push to dockerhub
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      inputs:
+        containerRegistry: 'dockerhub'
+        repository: 'danibish/my_first_bot'
+        command: 'buildAndPush'
+        Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        tags: |
+          $(GitVersion.MajorMinorPatch)
     
     - task: TerraformTaskV3@3
       displayName: Terraform init
