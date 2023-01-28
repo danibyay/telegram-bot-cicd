@@ -58,12 +58,14 @@ stages:
         backendAzureRmKey: 'my_first_bot.tfstate'
     
     - task: TerraformTaskV3@3
+      displayName: Tf validate
       inputs:
         provider: 'azurerm'
         command: 'validate'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
     
     - task: TerraformTaskV3@3
+      displayName: tf plan
       inputs:
         provider: 'azurerm'
         command: 'plan'
