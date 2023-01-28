@@ -6,10 +6,10 @@ terraform {
     }
   }
   backend "azurerm" {
-      resource_group_name  = "mi-terraform-RG"
-      storage_account_name = "miterraformsa"
-      container_name       = "tfstate"
-      key                  = "ms-golden-image.tfstate"
+      resource_group_name  = "tfstate"
+      storage_account_name = "tfstate23904"
+      container_name       = "tfstatebot"
+      key                  = "my_first_bot.tfstate"
   }
 
 }
