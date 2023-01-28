@@ -6,4 +6,4 @@ branches:
     increment: Patch
     is-mainline: true
 
- eq(variables['Build.SourceBranch'], 'refs/heads/main')
+ #eq(variables['Build.SourceBranch'], 'refs/heads/main')
