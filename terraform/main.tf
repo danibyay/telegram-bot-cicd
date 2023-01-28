@@ -16,7 +16,7 @@ resource "azurerm_container_group" "aci" {
     cpu    = "0.5"
     memory = "1.0"
 
-    secure_environment_variables {
+    secure_environment_variables  = {
         TOKEN = var.token
     } 
 
