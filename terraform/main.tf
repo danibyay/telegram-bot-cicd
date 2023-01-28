@@ -12,7 +12,7 @@ resource "azurerm_container_group" "aci" {
 
   container {
     name   = "telegram-bot"
-    image  = "danibish/my_first_bot:1.0.0"
+    image  = "danibish/my_first_bot:${var.tag}!"
     cpu    = "0.5"
     memory = "1.0"
 
@@ -36,4 +36,10 @@ resource "azurerm_container_group" "aci" {
 variable "token" {
   type        = string
   description = "api token for the app"
+}
+
+variable "tag" {
+  type        = string
+  description = "tag for the docker image to use"
+  default     = "1.0.0"
 }

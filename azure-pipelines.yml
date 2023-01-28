@@ -11,8 +11,10 @@ resources:
 variables:
 - group: TELEGRAM
 - group: TF_STORAGE_ACCOUNT
-- name: tag
+- name: buildTag
   value: '$(Build.BuildId)'
+- name: image_name
+  value: "danibish/my_first_bot"
 
 
 stages:
@@ -24,6 +26,21 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
+
+    - task: gitversion/setup@0
+      inputs:
+        versionSpec: '5.x'
+
+    - task: gitversion/execute@0
+      inputs:
+        useConfigFile: true
+        configFilePath: 'GitVersion.yml'
+    
+    - script: |
+        echo SemVer: $(GitVersion.SemVer)
+        echo MajorMinorPatch: $(GitVersion.MajorMinorPatch)
+      displayName: echo next tag
+
     # Build on any branch
     # - task: Docker@2
     #   displayName: Build an image
@@ -31,14 +48,14 @@ stages:
     #     command: build
     #     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
     #     tags: |
-    #       $(tag)
+    #       $(buildTag)
     
     # push only on master
     # - task: Docker@2
     #   displayName: Build and push to dockerhub
     #   inputs:
     #     containerRegistry: 'dockerhub'
-    #     repository: 'danibish/my_first_bot'
+    #     repository: $(image_name)
     #     command: 'buildAndPush'
     #     Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
     #     tags: |
@@ -71,4 +88,4 @@ stages:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         environmentServiceNameAzureRM: 'azure-telegram'
-        commandOptions: '-var token=$(danibishbot_token)'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
