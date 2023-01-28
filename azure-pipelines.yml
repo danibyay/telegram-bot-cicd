@@ -9,7 +9,11 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+- group: TELEGRAM
+- group: TF_STORAGE_ACCOUNT
+- name: tag
+  value: '$(Build.BuildId)'
+
 
 stages:
 - stage: Build
