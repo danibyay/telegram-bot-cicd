@@ -40,24 +40,24 @@ stages:
       displayName: echo next tag
 
     
-    # push on PRs to main
+    # push on PRs to main or develop
     - task: Docker@2
       displayName: Build and push to dockerhub
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/develop') )
       inputs:
         containerRegistry: 'dockerhub'
         repository: 'danibish/my_first_bot'
         command: 'buildAndPush'
         Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
-          $(GitVersion.MajorMinorPatch)
+          $(GitVersion.SemVer)
     
     - task: TerraformTaskV3@3
-      displayName: Terraform init
+      displayName: Prod Terraform init
       inputs:
         provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/prod'
         backendServiceArm: 'Azure subscription 1(fd4eca56-866a-4d42-8ec3-cc4426d20760)'
         backendAzureRmResourceGroupName: 'tfstate'
         backendAzureRmStorageAccountName: 'tfstate23904'
@@ -65,29 +65,67 @@ stages:
         backendAzureRmKey: 'my_first_bot.tfstate'
     
     - task: TerraformTaskV3@3
-      displayName: Tf validate
+      displayName: Prod Tf validate
       inputs:
         provider: 'azurerm'
         command: 'validate'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/prod'
     
     - task: TerraformTaskV3@3
-      displayName: tf plan
+      displayName: Prod tf plan
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/prod'
         environmentServiceNameAzureRM: 'azure-telegram'
-        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.SemVer)'
     
     - task: TerraformTaskV3@3
-      displayName: terraform apply
+      displayName: Prod terraform apply
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
       inputs:
         provider: 'azurerm'
         command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/prod'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.SemVer)'
+        environmentServiceNameAzureRM: 'azure-telegram'
+    
+    - task: TerraformTaskV3@3
+      displayName: Dev Terraform init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/dev'
+        backendServiceArm: 'Azure subscription 1(fd4eca56-866a-4d42-8ec3-cc4426d20760)'
+        backendAzureRmResourceGroupName: 'tfstate'
+        backendAzureRmStorageAccountName: 'tfstate23904'
+        backendAzureRmContainerName: 'tfstatebot'
+        backendAzureRmKey: 'my_first_bot_test.tfstate'
+    
+    - task: TerraformTaskV3@3
+      displayName: Dev Tf validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/dev'
+    
+    - task: TerraformTaskV3@3
+      displayName: Dev tf plan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/dev'
+        environmentServiceNameAzureRM: 'azure-telegram'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.SemVer)'
+   
+    - task: TerraformTaskV3@3
+      displayName: Dev terraform apply
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/dev'
+        commandOptions: '-var token=$(danibishbot_test_token) -var tag=$(GitVersion.SemVer)'
         environmentServiceNameAzureRM: 'azure-telegram'
     
     
