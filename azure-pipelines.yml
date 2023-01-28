@@ -27,19 +27,19 @@ stages:
       vmImage: ubuntu-latest
     steps:
 
-    # - task: gitversion/setup@0
-    #   inputs:
-    #     versionSpec: '5.x'
+    - task: gitversion/setup@0
+      inputs:
+        versionSpec: '5.x'
 
-    # - task: gitversion/execute@0
-    #   inputs:
-    #     useConfigFile: true
-    #     configFilePath: 'GitVersion.yml'
+    - task: gitversion/execute@0
+      inputs:
+        useConfigFile: true
+        configFilePath: 'GitVersion.yml'
     
-    # - script: |
-    #     echo SemVer: $(GitVersion.SemVer)
-    #     echo MajorMinorPatch: $(GitVersion.MajorMinorPatch)
-    #   displayName: echo next tag
+    - script: |
+        echo SemVer: $(GitVersion.SemVer)
+        echo MajorMinorPatch: $(GitVersion.MajorMinorPatch)
+      displayName: echo next tag
 
     # Build on any branch
     # - task: Docker@2
