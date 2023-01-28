@@ -78,7 +78,7 @@ stages:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/prod'
         environmentServiceNameAzureRM: 'azure-telegram'
-        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.SemVer)'
     
     - task: TerraformTaskV3@3
       displayName: Prod terraform apply
@@ -116,7 +116,7 @@ stages:
         command: 'plan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/dev'
         environmentServiceNameAzureRM: 'azure-telegram'
-        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.SemVer)'
    
     - task: TerraformTaskV3@3
       displayName: Dev terraform apply
