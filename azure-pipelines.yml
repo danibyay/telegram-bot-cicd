@@ -79,3 +79,15 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
         environmentServiceNameAzureRM: 'azure-telegram'
         commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
+    
+    - task: TerraformTaskV3@3
+      displayName: terraform apply
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
+        environmentServiceNameAzureRM: 'azure-telegram'
+    
+    
