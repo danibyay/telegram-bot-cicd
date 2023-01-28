@@ -9,7 +9,13 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+- group: TELEGRAM
+- group: TF_STORAGE_ACCOUNT
+- name: buildTag
+  value: '$(Build.BuildId)'
+- name: image_name
+  value: "danibish/my_first_bot"
+
 
 stages:
 - stage: Build
@@ -20,22 +26,68 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
+
+    # - task: gitversion/setup@0
+    #   inputs:
+    #     versionSpec: '5.x'
+
+    # - task: gitversion/execute@0
+    #   inputs:
+    #     useConfigFile: true
+    #     configFilePath: 'GitVersion.yml'
+    
+    # - script: |
+    #     echo SemVer: $(GitVersion.SemVer)
+    #     echo MajorMinorPatch: $(GitVersion.MajorMinorPatch)
+    #   displayName: echo next tag
+
+    # Build on any branch
     # - task: Docker@2
     #   displayName: Build an image
     #   inputs:
     #     command: build
     #     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
     #     tags: |
+    #       $(buildTag)
+
+    
+    # push only on master
+    # - task: Docker@2
+    #   displayName: Build and push to dockerhub
+    #   inputs:
+    #     containerRegistry: 'dockerhub'
+    #     repository: $(image_name)
+    #     command: 'buildAndPush'
+    #     Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+    #     tags: |
+    #       pipelinetest
     #       $(tag)
+    #eq(variables['Build.SourceBranch'], 'refs/heads/main')
     
-    - task: Docker@2
-      displayName: Build and push to dockerhub
+    - task: TerraformTaskV3@3
+      displayName: Terraform init
       inputs:
-        containerRegistry: 'dockerhub'
-        repository: 'danibish/my_first_bot'
-        command: 'buildAndPush'
-        Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: |
-          pipelinetest
-          tag
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        backendServiceArm: 'Azure subscription 1(fd4eca56-866a-4d42-8ec3-cc4426d20760)'
+        backendAzureRmResourceGroupName: 'tfstate'
+        backendAzureRmStorageAccountName: 'tfstate23904'
+        backendAzureRmContainerName: 'tfstatebot'
+        backendAzureRmKey: 'my_first_bot.tfstate'
     
+    - task: TerraformTaskV3@3
+      displayName: Tf validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+    
+    - task: TerraformTaskV3@3
+      displayName: tf plan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+        environmentServiceNameAzureRM: 'azure-telegram'
+        commandOptions: '-var token=$(danibishbot_token) -var tag=$(GitVersion.MajorMinorPatch)'
