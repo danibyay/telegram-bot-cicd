@@ -20,6 +20,7 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
+    # Build on any branch
     # - task: Docker@2
     #   displayName: Build an image
     #   inputs:
@@ -28,14 +29,15 @@ stages:
     #     tags: |
     #       $(tag)
     
-    - task: Docker@2
-      displayName: Build and push to dockerhub
-      inputs:
-        containerRegistry: 'dockerhub'
-        repository: 'danibish/my_first_bot'
-        command: 'buildAndPush'
-        Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: |
-          pipelinetest
-          tag
+    # push only on master
+    # - task: Docker@2
+    #   displayName: Build and push to dockerhub
+    #   inputs:
+    #     containerRegistry: 'dockerhub'
+    #     repository: 'danibish/my_first_bot'
+    #     command: 'buildAndPush'
+    #     Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+    #     tags: |
+    #       pipelinetest
+    #       $(tag)
     
