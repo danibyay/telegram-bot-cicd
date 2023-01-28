@@ -49,6 +49,7 @@ stages:
     #     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
     #     tags: |
     #       $(buildTag)
+
     
     # push only on master
     # - task: Docker@2
@@ -61,6 +62,7 @@ stages:
     #     tags: |
     #       pipelinetest
     #       $(tag)
+    #eq(variables['Build.SourceBranch'], 'refs/heads/main')
     
     - task: TerraformTaskV3@3
       displayName: Terraform init
