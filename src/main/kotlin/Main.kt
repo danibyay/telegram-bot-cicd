@@ -17,6 +17,8 @@ import dev.inmo.tgbotapi.types.message.MarkdownV2
 import dev.inmo.tgbotapi.utils.PreviewFeature
 import dev.inmo.tgbotapi.utils.extensions.escapeMarkdownV2Common
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * The main purpose of this bot is just to answer "Oh, hi, " and add user mention here
@@ -28,10 +30,24 @@ suspend fun main() {
         onContentMessage { message ->
             val chat = message.chat
             val messageText = message.text ?: ""
+            
+            val current = LocalDate.now()
+
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            
+            val concert = LocalDate.parse("2023-03-03", formatter)
+
+            val period = Period.between(current, concert)
+            val months = period.months
+            val days = period.days
+            
+            val countdown = "time to concert is: $months months and $days days"
 
             val sentence = when {
                 messageText.contains("Arnold", ignoreCase = true) -> "I am making things up again"
                 messageText.contains("hello", ignoreCase = true) -> "Hello\\, my name is Elder Cunningham"
+                messageText.contains("cavetown", ignoreCase = true) -> countdown
+                messageText.contains("concierto", ignoreCase = true) -> countdown
                 else -> ""
             }
 
