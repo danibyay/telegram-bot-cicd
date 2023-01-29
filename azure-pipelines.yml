@@ -4,6 +4,7 @@
 
 trigger:
 - main
+- develop
 
 resources:
 - repo: self
@@ -39,7 +40,17 @@ stages:
         echo MajorMinorPatch: $(GitVersion.MajorMinorPatch)
       displayName: echo next tag
 
-    
+
+    - task: Gradle@3
+      displayName: build project
+      inputs:
+        gradleWrapperFile: 'gradlew'
+        tasks: 'build'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+
     # push on PRs to main or develop
     - task: Docker@2
       displayName: Build and push to dockerhub
@@ -82,7 +93,7 @@ stages:
     
     - task: TerraformTaskV3@3
       displayName: Prod terraform apply
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      condition: and( succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
       inputs:
         provider: 'azurerm'
         command: 'apply'
@@ -120,7 +131,7 @@ stages:
    
     - task: TerraformTaskV3@3
       displayName: Dev terraform apply
-      condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
+      condition: and( succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop') )
       inputs:
         provider: 'azurerm'
         command: 'apply'
