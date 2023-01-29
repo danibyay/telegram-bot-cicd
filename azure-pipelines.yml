@@ -40,6 +40,7 @@ stages:
         echo MajorMinorPatch: $(GitVersion.MajorMinorPatch)
       displayName: echo next tag
 
+
     - task: Gradle@3
       displayName: build project
       inputs:

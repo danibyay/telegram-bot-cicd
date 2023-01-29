@@ -51,6 +51,7 @@ suspend fun main() {
                 messageText.contains("hello", ignoreCase = true) -> "Hello\\, my name is Elder Cunningham"
                 messageText.contains("cavetown", ignoreCase = true) -> countdown
                 messageText.contains("concierto", ignoreCase = true) -> countdown
+
                 else -> ""
             }
 
