@@ -44,7 +44,7 @@ suspend fun main() {
             val months = period.months
             val days = period.days
             
-            val countdown = "time to concert is: $months months and $days days"
+            val countdown = "time to vacaciones is: $months months and $days days"
 
             val sentence = when {
                 messageText.contains("Arnold", ignoreCase = true) -> "I am making things up again"
