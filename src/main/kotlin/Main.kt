@@ -40,12 +40,12 @@ suspend fun main() {
             
             val concert = LocalDate.parse("2023-04-06", formatter)
 
-
             val period = Period.between(current, concert)
             val months = period.months
             val days = period.days
             
             val countdown = "time to vacaciones is: $months months and $days days"
+
 
 
             val sentence = when {
