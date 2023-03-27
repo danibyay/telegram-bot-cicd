@@ -38,19 +38,21 @@ suspend fun main() {
 
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             
-            val concert = LocalDate.parse("2023-03-03", formatter)
+            val concert = LocalDate.parse("2023-04-06", formatter)
+
 
             val period = Period.between(current, concert)
             val months = period.months
             val days = period.days
             
-            val countdown = "time to concert is: $months months and $days days"
+            val countdown = "time to vacaciones is: $months months and $days days"
+
 
             val sentence = when {
                 messageText.contains("Arnold", ignoreCase = true) -> "I am making things up again"
                 messageText.contains("hello", ignoreCase = true) -> "Hello\\, my name is Elder Cunningham"
-                messageText.contains("cavetown", ignoreCase = true) -> countdown
-                messageText.contains("concierto", ignoreCase = true) -> countdown
+                messageText.contains("semana santa", ignoreCase = true) -> countdown
+                messageText.contains("vacaciones", ignoreCase = true) -> countdown
 
                 else -> ""
             }
